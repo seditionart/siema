@@ -371,11 +371,11 @@ export default class Siema {
   /**
    * Enable transition on sliderFrame.
    */
-  enableTransition() {
+  enableTransition(slidesToJump) {
     let totalDuration = this.config.duration;
 
-    if (this.config.durationPerSlide) {
-      totalDuration = this.config.duration * this.innerElements.length;
+    if (slidesToJump) {
+      totalDuration = this.config.duration * slidesToJump;
     }
 
     this.sliderFrame.style.webkitTransition = `all ${totalDuration}ms ${
@@ -399,7 +399,13 @@ export default class Siema {
     this.currentSlide = this.config.loop
       ? index % this.innerElements.length
       : Math.min(Math.max(index, 0), this.innerElements.length - this.perPage);
+
+    const slidesToJump = Math.max(beforeChange, this.currentSlide) - Math.min(beforeChange, this.currentSlide);
+
     if (beforeChange !== this.currentSlide) {
+      if (this.config.durationPerSlide) {
+        this.enableTransition(slidesToJump);
+      }
       this.slideToCurrent();
       this.config.onChange.call(this);
       if (callback) {
