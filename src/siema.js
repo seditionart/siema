@@ -400,7 +400,9 @@ export default class Siema {
       ? index % this.innerElements.length
       : Math.min(Math.max(index, 0), this.innerElements.length - this.perPage);
 
-    const slidesToJump = Math.max(beforeChange, this.currentSlide) - Math.min(beforeChange, this.currentSlide);
+    const slidesToJump =
+      Math.max(beforeChange, this.currentSlide) -
+      Math.min(beforeChange, this.currentSlide);
 
     if (beforeChange !== this.currentSlide) {
       if (this.config.durationPerSlide) {
@@ -498,7 +500,23 @@ export default class Siema {
 
     this.selectorWidth = this.selector.offsetWidth;
 
-    this.buildSliderFrame();
+    const widthItem = this.selectorWidth / this.perPage;
+    const itemsToBuild = this.config.loop
+      ? this.innerElements.length + 2 * this.perPage
+      : this.innerElements.length;
+
+    this.sliderFrame.style.width = `${widthItem * itemsToBuild}px`;
+    this.sliderFrame.style.webkitTransition = `all 0ms ${this.config.easing}`;
+    this.sliderFrame.style.transition = `all 0ms ${this.config.easing}`;
+
+    const currentSlide = this.config.loop
+      ? this.currentSlide + this.perPage
+      : this.currentSlide;
+    const currentOffset = currentSlide * (this.selectorWidth / this.perPage);
+    this.sliderFrame.style[this.transformProperty] = `translate3d(${(this.config
+      .rtl
+      ? 1
+      : -1) * currentOffset}px, 0, 0)`;
   }
 
   /**
